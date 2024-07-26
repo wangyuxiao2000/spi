@@ -138,5 +138,4 @@ void spi_regs(
             }
         }
     }
-    
 }

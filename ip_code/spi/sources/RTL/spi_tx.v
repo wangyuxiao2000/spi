@@ -7,7 +7,7 @@
 /*************************************************************/
 `timescale 1 ns / 1 ns
 
-module spi_tx (clk,rst_n,cs,sck,cpol,cpha,w_r_mode,wr_width,rd_width,s_axis_tdata,s_axis_tvalid,s_axis_tready,cs_sck_en,mosi,wr_data_num);
+module spi_tx (clk,rst_n,cs,sck,cpol,cpha,w_r_mode,wr_width,rd_width,s_axis_tdata,s_axis_tvalid,s_axis_tready,cs_sck_en,mosi,output_en,wr_data_num);
 /*******************************************工作参数设置******************************************/
 parameter system_clk=50_000000;    /*定义系统时钟频率(Hz)*/
 parameter spi_rate=5_000000;       /*定义SPI速率(bps)*/
@@ -27,6 +27,7 @@ input s_axis_tvalid;           /*输入数据有效标志,高电平有效*/
 output reg s_axis_tready;      /*向上游模块发送读请求或读确认信号,高电平有效*/
 output reg cs_sck_en;          /*spi_cs_sck模块启动信号*/
 output reg mosi;               /*spi主机的mosi接口输出*/
+output reg output_en;          /*输出使能信号*/
 output reg [15:0] wr_data_num; /*只写模式下spi已发送数据的总量*/
 
 
@@ -43,7 +44,7 @@ reg [4:0] data_cnt;
 reg cs_reg;
 reg sck_reg;
 reg mosi_wait_en;
-reg [((((N-1)&(N-1-1))==0)?$clog2(N-1):($clog2(N-1)-1)):0] mosi_wait_cnt;
+reg [$clog2(N-1):0] mosi_wait_cnt;
 
 always@(posedge clk or negedge rst_n)
 begin
@@ -84,6 +85,7 @@ begin
       cs_sck_en<=0;
       data_cnt<=0;
       mosi_wait_en<=0;
+      output_en<=(w_r_mode==0)?0:1; /*只读模式下,默认sdio口为输入状态;只写模式或指令控读模式下,默认sdio口为输出状态*/
       mosi<=0;
       wr_data_num<=0;
     end
@@ -119,7 +121,13 @@ begin
                                        if(!sck_reg&&sck)
                                          begin
                                            if(data_cnt==wr_width-1)
-                                             data_cnt<=0;
+                                             begin
+                                               data_cnt<=0;
+                                               if(w_r_mode==2) /*指令控读模式下,完成指令传输后,sdio口由输出状态变为输入状态*/
+                                                 output_en<=0;
+                                               else /*只写模式下,sdio口始终为输出状态*/
+                                                 output_en<=1;
+                                             end
                                            else
                                              data_cnt<=data_cnt+1;
                                          end
@@ -311,7 +319,7 @@ begin
                        if(w_r_mode==2'b01)
                          wr_data_num<=wr_data_num+1;
                        else
-                         wr_data_num<=0;
+                         wr_data_num<=wr_data_num;
                      end
       endcase
     end
@@ -322,9 +330,10 @@ begin
       data_reg<=0;
       cs_sck_en<=0;
       data_cnt<=0;
+      output_en<=0; /*只读模式下,sdio口始终为输入状态*/
       mosi<=0;
       mosi_wait_en<=0;
-      wr_data_num<=0;
+      wr_data_num<=wr_data_num;
     end
 end
 /************************************************************************************************/

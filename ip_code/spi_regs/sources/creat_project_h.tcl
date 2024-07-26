@@ -25,12 +25,12 @@ add_files -tb "../sources/HLS/$project_name\_test.cpp" -cflags "-std=c++14"
 set_top $project_name
 
 # 导出IP
-file delete -force ../../my_ip/$project_name
-file mkdir ../../my_ip/$project_name
+file delete -force ../../../my_ip/$project_name
+file mkdir ../../../my_ip/$project_name
 csim_design
 csynth_design
-config_export -description wyxee2000@163.com -display_name $project_name -format ip_catalog -output ../../my_ip/$project_name -rtl verilog -vendor xilinx.com -library user -taxonomy /UserIP -version $ip_verion
-export_design -rtl verilog -format ip_catalog -output ../../my_ip/$project_name
+config_export -description wyxee2000@163.com -display_name $project_name -format ip_catalog -output ../../../my_ip/$project_name -rtl verilog -vendor xilinx.com -library user -taxonomy /UserIP -version $ip_verion
+export_design -rtl verilog -format ip_catalog -output ../../../my_ip/$project_name
 } else {
 # 创建工程
 file delete -force $project_name
@@ -47,16 +47,16 @@ add_files -tb "../sources/HLS/$project_name\_test.cpp" -cflags "-std=c++14"
 set_top $project_name
 
 # 导出IP
-file delete -force ../../my_ip/$project_name
-file mkdir ../../my_ip/$project_name
+file delete -force ../../../my_ip/$project_name
+file mkdir ../../../my_ip/$project_name
 csim_design
 csynth_design
-config_export -description wyxee2000@163.com -display_name dma_grabber -format ip_catalog -library user -output ../../my_ip/dma_grabber -rtl verilog -taxonomy /UserIP -vendor xilinx.com -version 1.0.0
-export_design -flow impl -rtl verilog -format ip_catalog -output ../../my_ip/$project_name
+config_export -description wyxee2000@163.com -display_name dma_grabber -format ip_catalog -library user -output ../../../my_ip/dma_grabber -rtl verilog -taxonomy /UserIP -vendor xilinx.com -version 1.0.0
+export_design -flow impl -rtl verilog -format ip_catalog -output ../../../my_ip/$project_name
 }
 
 # 调用系统命令解压ZIP文件
-exec unzip "../../my_ip/$project_name/export.zip" -d "../../my_ip/$project_name"
-file delete "../../my_ip/$project_name/export.zip"
+exec unzip "../../../my_ip/$project_name/export.zip" -d "../../../my_ip/$project_name"
+file delete "../../../my_ip/$project_name/export.zip"
 
 exit
