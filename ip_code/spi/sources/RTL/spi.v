@@ -54,11 +54,23 @@ begin
   wire rx_en;
   wire real_rst_n;
   wire output_en;
+  wire rx_in;
   wire tx_out;
 
   assign U1_en=(w_r_mode==0)?rx_en:tx_en;
   assign real_rst_n=rst_n&&soft_rst_n;
-  assign sdio=output_en?tx_out:1'bz;
+
+  IOBUF #(
+      .DRIVE(12),
+      .IBUF_LOW_PWR("TRUE"),
+      .IOSTANDARD("DEFAULT"),
+      .SLEW("SLOW")
+   ) IOBUF_inst (
+      .O(rx_in),     // Buffer output
+      .IO(sdio),     // Buffer inout port (connect directly to top-level port)
+      .I(tx_out),    // Buffer input
+      .T(~output_en) // 3-state enable input, high=input, low=output
+   );
 
   spi_cs_sck #(.system_clk(system_clk),
                .spi_rate(spi_rate),
@@ -118,7 +130,7 @@ begin
             .wr_width(wr_width),
             .rd_width(rd_width),
             .rd_target_num(rd_target_num),
-            .miso(sdio),
+            .miso(rx_in),
             .m_axis_tready(m_axis_tready),
             .m_axis_tdata(m_axis_tdata),
             .m_axis_tvalid(m_axis_tvalid),
