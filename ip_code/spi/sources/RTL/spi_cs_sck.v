@@ -5,7 +5,7 @@
 //Data    : 2023.09.15
 //Version : V 1.0
 /*************************************************************/
-`timescale 1 ns / 1 ns
+`timescale 1 ns / 1 ps
 
 module spi_cs_sck (clk,rst_n,en,cpol,cpha,w_r_mode,wr_width,rd_width,cs,sck);
 /*******************************************工作参数设置******************************************/

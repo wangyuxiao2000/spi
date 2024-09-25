@@ -5,7 +5,7 @@
 //Data    : 2023.09.16
 //Version : V 1.0
 /*************************************************************/
-`timescale 1 ns / 1 ns
+`timescale 1 ns / 1 ps
 
 module spi_rx (clk,rst_n,cs,sck,cpol,cpha,w_r_mode,wr_width,rd_width,rd_target_num,miso,m_axis_tready,m_axis_tdata,m_axis_tvalid,cs_sck_en);
 input clk;                      /*系统时钟*/

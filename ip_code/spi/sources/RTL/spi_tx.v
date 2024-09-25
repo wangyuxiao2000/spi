@@ -5,7 +5,7 @@
 //Data    : 2023.09.16
 //Version : V 1.0
 /*************************************************************/
-`timescale 1 ns / 1 ns
+`timescale 1 ns / 1 ps
 
 module spi_tx (clk,rst_n,cs,sck,cpol,cpha,w_r_mode,wr_width,rd_width,s_axis_tdata,s_axis_tvalid,s_axis_tready,cs_sck_en,mosi,output_en,wr_data_num);
 /*******************************************工作参数设置******************************************/
